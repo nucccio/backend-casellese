@@ -1,13 +1,13 @@
-package de.htwg.in.schneider.casellese.backend_casellese;
+package de.htwg.in.wete.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendCaselleseApplication {
+public class BackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendCaselleseApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }

@@ -1,16 +1,19 @@
-# Test-Datenbank
-mvn spring-boot:run -Dspring-boot.run.profiles=local
+# Saitenweise Backend Example
 
-# Prod-Datenbank
-mvn spring-boot:run -Dspring-boot.run.profiles=prod
+Dies ist eine Version des Saitenweise-Backends als erster Ausgangspunkt für Spring Boot Backends.
 
-## IMPORTANT
-- VPN Connect
+Es entspricht der Iteration 7 von main, aber ohne Profil-Konfiguration und ohne Unit-Tests.
 
-## COMMANDS
-- mvn spring-boot:run -Dspring-boot.run.profiles=local 
-- starten von: curl http://localhost:8081/api/product
-- kill -9 < PID> z.B.:88517
-- ping 58ea917d-11a0-4864-979f-34a7070d9edc.ma.bw-cloud-instance.org
-- Control + C to stop sh bash
+Bitte ändern Sie zuerst in der pom.xml die `artifactId` in Zeile 12 auf den Namen Ihres Projekts (alles kleingeschrieben, ggf. mit - getrennt).
 
+Dann starten Sie die Applikation `src/main/java/de/htwg/in/wete/backend/BackendApplication.java` testweise entweder in der IDE oder über die Kommandozeile per
+
+```sh
+./mvnw spring-boot:run
+```
+
+(Unter Windows das ./ weglassen).
+
+Sie sollten jetzt im Browser bei Aufruf von `http://localhost:8081/api/product` die Liste der Produkte angezeigt bekommen (JSON).
+
+Stoppen Sie die Applikation und öffnen Sie `src/main/resources/application.properties`. Hier können Sie die H2-Konfiguration durch Kommentare (`#` am Anfang der Zeile) deaktivieren und die MariaDB-Konfiguration einstellen (mit den Daten für Ihre Datenbank).
