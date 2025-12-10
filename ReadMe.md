@@ -13,3 +13,4 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod
 - kill -9 < PID> z.B.:88517
 - ping 58ea917d-11a0-4864-979f-34a7070d9edc.ma.bw-cloud-instance.org
 - Control + C to stop sh bash
+
