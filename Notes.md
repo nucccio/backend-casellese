@@ -6,9 +6,16 @@
 - 
 
 # Iteration 1:
-- ./mvnw spring-boot:run , !WICHTIG! Das Backend erst starten, bevor das Terminal funktioniert
-- curl http://localhost:8081/api/product in neuem Bash Terminal
+./mvnw spring-boot:run , !WICHTIG! Das Backend erst starten, bevor das Terminal funktioniert
+curl http://localhost:8081/api/product in neuem Bash Terminal
 
 # Iteration 2: 
-- mvn spring-boot:run -Dspring-boot.run.profiles=local
-- Replace local with prod to use the production profile.
+## Lokal mit H2 (erst Java-Prozesse beenden!)
+pkill -f java  # oder: rm -f ./target/saitenweise-db.mv.db
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+## Mit Test-Datenbank (MariaDB)
+mvn spring-boot:run -Dspring-boot.run.profiles=test
+
+## Mit Produktions-Datenbank (MariaDB)
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
