@@ -1,0 +1,24 @@
+# Production Profile Configuration - MariaDB
+# IMPORTANT: Copy this file to application-prod.properties and fill in your credentials
+# The application-prod.properties file should NOT be committed to git!
+
+# MariaDB Database Configuration (Production)
+spring.datasource.url=jdbc:mariadb://YOUR_HOST:3306/YOUR_DATABASE
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+
+# Hibernate Settings for Production
+# 'update' preserves existing data while applying schema changes
+# 'validate' only validates schema without changes (safest for production)
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
+
+# Disable SQL logging in production for performance
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=false
+
+# Connection pool settings (optional, adjust as needed)
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000

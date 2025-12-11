@@ -1,5 +1,9 @@
 # Notes
 - Achte auf H2 Configuration and MariaDB-Configuration in application.properties
+- CTRL + C beendet Prozess
+- lsof -i :8081 | grep LISTEN (PID graben)
+- kill -9 <PID> (Prozess killen)
+- ./mvnw spring-boot:run (BackEnd starten)
 
 # Support-Fragen Herr Schneider
 - Was ist der Unterschied zu mvn spring-boot:run und starten der BackEnd-Application?
@@ -19,3 +23,9 @@ mvn spring-boot:run -Dspring-boot.run.profiles=test
 
 ## Mit Produktions-Datenbank (MariaDB)
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
+
+# Iteration 3:
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+- JDBC URL: jdbc:h2:file:./target/saitenweise-db;AUTO_SERVER=TRUE
+- Username: sa
+- unter http://localhost:8081/h2-console
