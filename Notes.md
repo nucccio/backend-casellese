@@ -29,6 +29,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod
 - JDBC URL: jdbc:h2:file:./target/saitenweise-db;AUTO_SERVER=TRUE
 - Username: sa
 - unter http://localhost:8081/h2-console
+![alt text](image-1.png)
 
 # Iteration 4: CORS Configuration
 Ohne diese Konfiguration würde der Browser Anfragen vom Frontend (z.B. http://localhost:5173) an das Backend (z.B. http://localhost:8081) blockieren, da sie von unterschiedlichen Origins kommen. Die CORS-Konfiguration erlaubt diese Cross-Origin-Anfragen.

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import de.htwg.in.wete.backend.model.Product;
+//import de.htwg.in.wete.backend.model.Product;
 import de.htwg.in.wete.backend.model.Recipe;
 import de.htwg.in.wete.backend.repository.ProductRepository;
 import de.htwg.in.wete.backend.repository.RecipeRepository;
