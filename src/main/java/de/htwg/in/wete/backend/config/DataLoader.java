@@ -1,6 +1,5 @@
 package de.htwg.in.wete.backend.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,37 +13,29 @@ import de.htwg.in.wete.backend.model.Role;
 import de.htwg.in.wete.backend.repository.ProductRepository;
 import de.htwg.in.wete.backend.repository.RecipeRepository;
 import de.htwg.in.wete.backend.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 
 import java.util.Arrays;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * DataLoader für initiale Daten beim Anwendungsstart.
+ * 
+ * WICHTIG für Auth0-Integration:
+ * 1. Erstelle zuerst einen Benutzer in deinem Auth0-Tenant
+ * 2. Kopiere die 'sub' Claim (oauthId) aus dem JWT Token
+ * 3. Trage diese ID hier in loadInitialUsers() ein
+ * 
+ * Die oauthId hat folgendes Format:
+ * - Auth0 Database: "auth0|64abc123..."
+ * - Google Login: "google-oauth2|123456789..."
+ * - GitHub Login: "github|12345..."
+ */
 @Configuration
 @Profile("!test")
 public class DataLoader {
 
-    // Admin User Repository für PostConstruct
-    @Autowired
-    private UserRepository userRepository;
-
-    @PostConstruct
-    public void init() {
-    // ... bestehender Code für Produkte ...
-    
-    // Admin-User anlegen (falls noch nicht vorhanden)
-    if (userRepository.findByOauthId("auth0|DEINE_AUTH0_USER_ID").isEmpty()) {
-        User admin = new User();
-        admin.setName("Carmine Savino"); // Admin Name
-        admin.setEmail("Carmine@mysavino.com");
-        admin.setOauthId("google-oauth2|101893517382862224753");  // <- Aus Auth0 Dashboard
-        admin.setRole(Role.ADMIN);
-        userRepository.save(admin);
-     }
-    }
-
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
     @Bean
@@ -52,7 +43,7 @@ public class DataLoader {
         return args -> {
             loadInitialUsers(userRepository);
 
-            // only load products and recipes if none exist
+            // Nur Produkte und Rezepte laden, wenn keine existieren
             if (repository.count() == 0) {
                 LOGGER.info("Database is empty. Loading initial data...");
                 loadInitialData(repository, recipeRepository);
@@ -62,24 +53,46 @@ public class DataLoader {
         };
     }
 
-
     /**
-     * Load initial user data.
+     * Lädt initiale Benutzer.
      * 
-     * IMPORTANT: When copying this code, you need to:
-     * 1. Create users in your Auth0 tenant first
-     * 2. Replace the oauthId values with the actual 'sub' claim from Auth0
-     *    Format is typically: "auth0|123456789" for Auth0 users -> auth0|6943dcd996d00876f0d33277
+     * ANLEITUNG: So findest du deine oauthId:
+     * 1. Starte Frontend und Backend
+     * 2. Melde dich im Frontend an
+     * 3. Gehe zur Profil-Seite und öffne "OAuth2-Debug-Info"
+     * 4. Im JWT-Token findest du unter "sub" deine oauthId
+     * 5. Trage diese ID hier ein
      */
     private void loadInitialUsers(UserRepository userRepository) {
-        // Replace these with your actual Auth0 user IDs!
-        // upsertUser(userRepository, "Carmine Savino", "carmine@mysavino.com", "auth0|6943dcd996d00876f0d33277", Role.ADMIN);
-        // upsertUser(userRepository, "Regular User", "admin@example.com", "auth0|REPLACE_WITH_YOUR_ADMIN_ID", Role.REGULAR);
-        // Für Machine-to-Machine Token 
-        upsertUser(userRepository, "API Client", "api@casellese.local", "YA6xaTr1pV4JUBJsDf0SPFlzWjciue1d@clients", Role.ADMIN);
+        // ============================================================
+        // HIER DEINE EIGENEN AUTH0-BENUTZER EINTRAGEN!
+        // ============================================================
+        
+        // Beispiel für Admin-User mit Google Login:
+        upsertUser(userRepository, 
+            "Carmine Savino",                           // Name
+            "carmine@mysavino.com",                     // Email
+            "google-oauth2|101893517382862224753",      // oauthId (aus Auth0)
+            Role.ADMIN);
+        
+        // Beispiel für regulären User (auskommentiert):
+        // upsertUser(userRepository, 
+        //     "Dein Name",                              // Name
+        //     "deine@email.com",                        // Email
+        //     "auth0|DEINE_AUTH0_USER_ID",              // oauthId
+        //     Role.REGULAR);
+        
+        // Für Machine-to-Machine (M2M) API-Zugriff:
+        upsertUser(userRepository, 
+            "API Client", 
+            "api@casellese.local", 
+            "YA6xaTr1pV4JUBJsDf0SPFlzWjciue1d@clients", 
+            Role.ADMIN);
     }
-    // upsertUser(userRepository, "Dein Name", "deine@email.com", "auth0|DEINE_ECHTE_ID", Role.REGULAR);
 
+    /**
+     * Fügt einen Benutzer hinzu oder aktualisiert ihn, falls er bereits existiert.
+     */
     private void upsertUser(UserRepository userRepository, String name, String email, String oauthId, Role role) {
         Optional<User> existing = userRepository.findByEmail(email);
         if (existing.isPresent()) {
@@ -100,6 +113,9 @@ public class DataLoader {
         }
     }
 
+    /**
+     * Lädt initiale Produkte und Rezepte.
+     */
     private void loadInitialData(ProductRepository repository, RecipeRepository recipeRepository) {
         // Produkt 1: Caciocavallo (Käse)
         Product caciocavallo = new Product();
