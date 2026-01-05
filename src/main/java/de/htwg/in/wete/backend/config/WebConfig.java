@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                     "http://localhost:5173",                    // Vite Dev Server
                     "http://localhost:5174",                    // Vite Dev Server (Alternative Port)
+                    "http://localhost:5175",                    // Vite Dev Server (Alternative Port)
                     "http://localhost:3000",                    // Alternative Dev Server
                     "https://htwg-in-schneider.github.io",      // GitHub Pages Production
                     "https://frontend-casellese.onrender.com"   // Render Production (falls verwendet)
