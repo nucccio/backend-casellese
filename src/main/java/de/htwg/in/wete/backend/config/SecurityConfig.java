@@ -2,11 +2,14 @@ package de.htwg.in.wete.backend.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring Security Konfiguration für Auth0 JWT-Authentifizierung.
@@ -24,11 +27,34 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Separate Security-Chain für H2-Console (ohne JWT-Validierung)
+     */
     @Bean
+    @Order(1)
+    public SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**"))
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 // CORS aktivieren (Konfiguration in WebConfig.java)
                 .cors(withDefaults())
+                
+                // CSRF deaktivieren für API
+                .csrf(csrf -> csrf.disable())
+                
+                // Frame-Options
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                )
                 
                 // Autorisierungsregeln definieren
                 .authorizeHttpRequests((authorize) -> authorize
@@ -64,9 +90,6 @@ public class SecurityConfig {
                         
                         // Alle anderen API-Endpoints sind öffentlich
                         .requestMatchers("/api/**").permitAll()
-                        
-                        // H2-Console für Entwicklung (nur mit local-Profil aktiv)
-                        .requestMatchers("/h2-console/**").permitAll()
                 )
                 
                 // JWT Resource Server konfigurieren
