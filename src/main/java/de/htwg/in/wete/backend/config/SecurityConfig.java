@@ -65,6 +65,9 @@ public class SecurityConfig {
                         // Profil-Endpoint erfordert Authentifizierung
                         .requestMatchers("/api/profile").authenticated()
                         
+                        // Favoriten-Endpoints erfordern Authentifizierung
+                        .requestMatchers("/api/favorites/**").authenticated()
+                        
                         // Produkt-Schreiboperationen erfordern Authentifizierung
                         .requestMatchers(HttpMethod.POST, "/api/product", "/api/product/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/product/*").authenticated()
