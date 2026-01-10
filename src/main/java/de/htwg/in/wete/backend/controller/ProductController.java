@@ -14,7 +14,8 @@ import de.htwg.in.wete.backend.model.User;
 import de.htwg.in.wete.backend.repository.ProductRepository;
 import de.htwg.in.wete.backend.repository.UserRepository;
 
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 
 
@@ -72,7 +73,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@AuthenticationPrincipal Jwt jwt, @RequestBody Product product) {
+    public ResponseEntity<Product> createProduct(@AuthenticationPrincipal Jwt jwt, 
+            @Valid @RequestBody Product product) {
         if (!userFromJwtIsAdmin(jwt)) {
             return ResponseEntity.status(403).build();
         }
@@ -88,7 +90,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@AuthenticationPrincipal Jwt jwt, 
-            @PathVariable Long id, @RequestBody Product productDetails) {
+            @PathVariable Long id, @Valid @RequestBody Product productDetails) {
         if (!userFromJwtIsAdmin(jwt)) {
             return ResponseEntity.status(403).build();
         }
@@ -101,6 +103,8 @@ public class ProductController {
         product.setCategory(productDetails.getCategory());
         product.setDescription(productDetails.getDescription());
         product.setImageUrl(productDetails.getImageUrl());
+        product.setImageUrlDetails(productDetails.getImageUrlDetails());
+        product.setIngredients(productDetails.getIngredients());
         product.setPrice(productDetails.getPrice());
         product.setTitle(productDetails.getTitle());
         Product updatedProduct = productRepository.save(product);
@@ -133,5 +137,3 @@ public class ProductController {
         }
     }
 }
-
-// Iteration 10: Requiring admin privileges for product creation, update and deletion

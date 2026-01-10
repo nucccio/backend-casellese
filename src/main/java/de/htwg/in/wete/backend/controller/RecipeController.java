@@ -16,6 +16,8 @@ import de.htwg.in.wete.backend.repository.ProductRepository;
 import de.htwg.in.wete.backend.repository.RecipeRepository;
 import de.htwg.in.wete.backend.repository.UserRepository;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -82,7 +84,7 @@ public class RecipeController {
     public ResponseEntity<Recipe> createRecipe(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long productId, 
-            @RequestBody Recipe recipe) {
+            @Valid @RequestBody Recipe recipe) {
         if (!userFromJwtIsAdmin(jwt)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -102,7 +104,7 @@ public class RecipeController {
     public ResponseEntity<Recipe> updateRecipe(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long id, 
-            @RequestBody Recipe recipeDetails) {
+            @Valid @RequestBody Recipe recipeDetails) {
         if (!userFromJwtIsAdmin(jwt)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

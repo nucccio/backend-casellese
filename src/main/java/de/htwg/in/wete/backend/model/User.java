@@ -1,6 +1,9 @@
 package de.htwg.in.wete.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "app_user") // <-- Rename table to avoid reserved keyword
@@ -8,8 +11,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @Email(message = "Ungültige E-Mail-Adresse")
     private String email;
+    
+    @Size(max = 200, message = "Name darf maximal 200 Zeichen lang sein")
     private String name;
+    
+    @NotBlank(message = "OAuth-ID darf nicht leer sein")
     private String oauthId;
 
     @Enumerated(EnumType.STRING) // <-- Use JPA enum mapping

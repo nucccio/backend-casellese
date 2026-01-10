@@ -41,4 +41,4 @@ class CategoryControllerTests {
     }
 }
 
-// Iteration 8: Tests für CategoryController
+// ./mvnw test

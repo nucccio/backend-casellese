@@ -8,6 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -20,15 +25,25 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Titel darf nicht leer sein")
+    @Size(min = 2, max = 200, message = "Titel muss zwischen 2 und 200 Zeichen lang sein")
     private String title;
+
+    @Size(max = 2000, message = "Beschreibung darf maximal 2000 Zeichen lang sein")
     private String description;
 
+    @NotNull(message = "Kategorie muss angegeben werden")
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @NotNull(message = "Preis muss angegeben werden")
+    @PositiveOrZero(message = "Preis darf nicht negativ sein")
     private Double price;
+
     private String imageUrl;
     private String imageUrlDetails;
+
+    @Size(max = 2000, message = "Zutaten dürfen maximal 2000 Zeichen lang sein")
     private String ingredients;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

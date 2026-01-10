@@ -80,3 +80,5 @@ public class ProfileControllerTests {
                 .andExpect(status().isUnauthorized());
     }
 }
+
+// ./mvnw test

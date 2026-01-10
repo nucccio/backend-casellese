@@ -2,14 +2,12 @@ package de.htwg.in.wete.backend.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring Security Konfiguration für Auth0 JWT-Authentifizierung.
@@ -34,7 +32,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**"))
+                .securityMatcher("/h2-console/**")
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
@@ -69,27 +67,29 @@ public class SecurityConfig {
                         .requestMatchers("/api/favorites/**").authenticated()
                         
                         // Produkt-Schreiboperationen erfordern Authentifizierung
-                        .requestMatchers(HttpMethod.POST, "/api/product", "/api/product/*").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/product/*").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/product/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/product", "/api/product/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/product/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/product/**").authenticated()
                         
                         // Rezept-Schreiboperationen erfordern Authentifizierung
-                        .requestMatchers(HttpMethod.POST, "/api/recipe", "/api/recipe/*").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/recipe/*").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/recipe/*").authenticated()
+                        // KORRIGIERT: /api/recipes/* und /api/products/*/recipes (nicht /api/recipe/*)
+                        .requestMatchers(HttpMethod.POST, "/api/recipes", "/api/recipes/**", "/api/products/*/recipes").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/recipes/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/recipes/**").authenticated()
                         
                         // ========================================
                         // ÖFFENTLICHE ENDPOINTS (kein JWT nötig)
                         // ========================================
                         
                         // Produkt-Leseoperationen sind öffentlich
-                        .requestMatchers(HttpMethod.GET, "/api/product", "/api/product/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/product", "/api/product/**").permitAll()
                         
                         // Rezept-Leseoperationen sind öffentlich
-                        .requestMatchers(HttpMethod.GET, "/api/recipe", "/api/recipe/*").permitAll()
+                        // KORRIGIERT: /api/recipes/* und /api/products/*/recipes
+                        .requestMatchers(HttpMethod.GET, "/api/recipes", "/api/recipes/**", "/api/products/*/recipes").permitAll()
                         
                         // Kategorie-Endpoints sind öffentlich
-                        .requestMatchers("/api/category", "/api/category/*").permitAll()
+                        .requestMatchers("/api/category", "/api/category/**").permitAll()
                         
                         // Alle anderen API-Endpoints sind öffentlich
                         .requestMatchers("/api/**").permitAll()

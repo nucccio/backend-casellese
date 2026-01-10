@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,13 +21,16 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Rezept-Titel darf nicht leer sein")
+    @Size(min = 2, max = 200, message = "Rezept-Titel muss zwischen 2 und 200 Zeichen lang sein")
     private String title;
 
     @Column(columnDefinition = "TEXT")
+    @Size(max = 10000, message = "Rezept-Text darf maximal 10000 Zeichen lang sein")
     private String text;
 
     private String pdfUrl;
-
+    
     private String youtubeUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,7 +47,7 @@ public class Recipe {
         this.text = text;
         this.pdfUrl = pdfUrl;
     }
-
+    
     public Recipe(String title, String text, String pdfUrl, String youtubeUrl) {
         this.title = title;
         this.text = text;
@@ -82,11 +87,11 @@ public class Recipe {
     public void setPdfUrl(String pdfUrl) {
         this.pdfUrl = pdfUrl;
     }
-
+    
     public String getYoutubeUrl() {
         return youtubeUrl;
     }
-
+    
     public void setYoutubeUrl(String youtubeUrl) {
         this.youtubeUrl = youtubeUrl;
     }

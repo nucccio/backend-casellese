@@ -14,3 +14,5 @@ class BackendApplicationTests {
     }
 
 }
+
+// ./mvnw test
