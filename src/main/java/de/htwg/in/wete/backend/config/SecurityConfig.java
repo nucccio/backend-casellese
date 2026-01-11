@@ -60,8 +60,9 @@ public class SecurityConfig {
                         // GESCHÜTZTE ENDPOINTS (erfordern JWT)
                         // ========================================
                         
-                        // Profil-Endpoint erfordert Authentifizierung
-                        .requestMatchers("/api/profile").authenticated()
+                        // Profil-Endpoints erfordern Authentifizierung (GET und PUT)
+                        .requestMatchers(HttpMethod.GET, "/api/profile").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/profile").authenticated()
                         
                         // Favoriten-Endpoints erfordern Authentifizierung
                         .requestMatchers("/api/favorites/**").authenticated()
@@ -72,7 +73,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/product/**").authenticated()
                         
                         // Rezept-Schreiboperationen erfordern Authentifizierung
-                        // KORRIGIERT: /api/recipes/* und /api/products/*/recipes (nicht /api/recipe/*)
                         .requestMatchers(HttpMethod.POST, "/api/recipes", "/api/recipes/**", "/api/products/*/recipes").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/recipes/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/recipes/**").authenticated()
@@ -85,7 +85,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/product", "/api/product/**").permitAll()
                         
                         // Rezept-Leseoperationen sind öffentlich
-                        // KORRIGIERT: /api/recipes/* und /api/products/*/recipes
                         .requestMatchers(HttpMethod.GET, "/api/recipes", "/api/recipes/**", "/api/products/*/recipes").permitAll()
                         
                         // Kategorie-Endpoints sind öffentlich
