@@ -64,6 +64,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/profile").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/profile").authenticated()
                         
+                        // User-Verwaltung erfordert Authentifizierung (Admin-Check im Controller)
+                        .requestMatchers("/api/users", "/api/users/**").authenticated()
+                        
                         // Favoriten-Endpoints erfordern Authentifizierung
                         .requestMatchers("/api/favorites/**").authenticated()
                         
