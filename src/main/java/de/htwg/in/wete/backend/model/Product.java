@@ -36,7 +36,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @NotNull(message = "Preis muss angegeben werden")
+    // GEÄNDERT: Preis ist jetzt optional (kein @NotNull mehr)
+    // Für ein Rezeptbuch ist der Preis nicht zwingend erforderlich
     @PositiveOrZero(message = "Preis darf nicht negativ sein")
     private Double price;
 
@@ -83,7 +84,7 @@ public class Product {
     }
 
     public double getPrice() {
-        return price;
+        return price != null ? price : 0.0;
     }
 
     public void setPrice(double price) {

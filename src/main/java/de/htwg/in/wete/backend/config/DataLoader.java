@@ -124,7 +124,7 @@ public class DataLoader {
         caciocavallo.setDescription(
                 "Caciocavallo ist ein italienischer Kult-Käse mit unverwechselbarer birnenförmiger Gestalt, der traditionell paarweise an der Schnur hängt");
         caciocavallo.setCategory(Category.KAESE);
-        //caciocavallo.setPrice(7.99);
+        caciocavallo.setPrice(0.0); // GEÄNDERT: Preis gesetzt (0 für Rezeptbuch)
         caciocavallo.setImageUrl("http://nucccio.github.io/casellese-images/caciocavallo.webp");
         caciocavallo.setImageUrlDetails("http://nucccio.github.io/casellese-images/caciocavallo-rezepte.webp");
         caciocavallo.setIngredients("Kuhmilch, Lab, Salz, Konservierungsstoff: Natriumbenzoat (E211)");
@@ -135,7 +135,7 @@ public class DataLoader {
         salsiccia.setDescription(
                 "Salsiccia ist eine traditionelle italienische Wurst aus fein gewürztem Schweinefleisch, oft mit Knoblauch, Fenchel oder Chili verfeinert.");
         salsiccia.setCategory(Category.SALAMI);
-        //salsiccia.setPrice(15.99);
+        salsiccia.setPrice(0.0); // GEÄNDERT: Preis gesetzt (0 für Rezeptbuch)
         salsiccia.setImageUrl("http://nucccio.github.io/casellese-images/salsiccia.webp");
         salsiccia.setImageUrlDetails("http://nucccio.github.io/casellese-images/salsiccia-rezepte.webp");
         salsiccia.setIngredients("Schweinefleisch, Salz, Knoblauch, Fenchelsamen, Paprika, schwarzer Pfeffer");
@@ -146,7 +146,7 @@ public class DataLoader {
         brot.setDescription(
                 "Brot ist das zeitlose Grundnahrungsmittel, frisch gebacken mit knuspriger Kruste und weichem Inneren.");
         brot.setCategory(Category.BROT);
-        //brot.setPrice(4.99);
+        brot.setPrice(0.0); // GEÄNDERT: Preis gesetzt (0 für Rezeptbuch)
         brot.setImageUrl("http://nucccio.github.io/casellese-images/brot.webp");
         brot.setImageUrlDetails("http://nucccio.github.io/casellese-images/brot-rezepte.webp");
         brot.setIngredients("Weizenmehl, Wasser, Hefe, Salz, Olivenöl");
