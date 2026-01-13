@@ -40,7 +40,50 @@ public class FavoriteController {
     private RecipeRepository recipeRepository;
 
     // ========================================
-    // ADMIN-METHODEN (NEU HINZUGEFÜGT)
+    // HILFSMETHODEN
+    // ========================================
+
+    /**
+     * Findet oder erstellt einen User basierend auf JWT.
+     * Verhindert doppelte User-Einträge durch Suche nach oauthId UND Email.
+     */
+    private User findOrCreateUser(Jwt jwt) {
+        String oauthId = jwt.getSubject();
+        String emailFromJwt = jwt.getClaimAsString("email");
+        
+        // 1. Zuerst nach oauthId suchen
+        return userRepository.findByOauthId(oauthId)
+                .orElseGet(() -> {
+                    // 2. Falls nicht gefunden, nach Email suchen
+                    if (emailFromJwt != null) {
+                        return userRepository.findByEmail(emailFromJwt)
+                                .map(existingUser -> {
+                                    // User per Email gefunden - aktualisiere oauthId
+                                    LOGGER.info("Found existing user by email={}, updating oauthId", emailFromJwt);
+                                    existingUser.setOauthId(oauthId);
+                                    return userRepository.save(existingUser);
+                                })
+                                .orElseGet(() -> createNewUser(oauthId, jwt));
+                    }
+                    return createNewUser(oauthId, jwt);
+                });
+    }
+
+    /**
+     * Erstellt einen neuen User mit REGULAR-Rolle.
+     */
+    private User createNewUser(String oauthId, Jwt jwt) {
+        LOGGER.info("Creating new user with oauthId: {}", oauthId);
+        User newUser = new User();
+        newUser.setOauthId(oauthId);
+        newUser.setName(jwt.getClaimAsString("name"));
+        newUser.setEmail(jwt.getClaimAsString("email"));
+        newUser.setRole(Role.REGULAR);
+        return userRepository.save(newUser);
+    }
+
+    // ========================================
+    // ADMIN-METHODEN
     // ========================================
 
     /**
@@ -201,17 +244,8 @@ public class FavoriteController {
         String oauthId = jwt.getSubject();
         LOGGER.info("addFavorite called for user: {} and recipe: {}", oauthId, recipeId);
 
-        // User finden oder erstellen
-        User user = userRepository.findByOauthId(oauthId)
-                .orElseGet(() -> {
-                    LOGGER.info("Creating new user with oauthId: {}", oauthId);
-                    User newUser = new User();
-                    newUser.setOauthId(oauthId);
-                    newUser.setName(jwt.getClaimAsString("name"));
-                    newUser.setEmail(jwt.getClaimAsString("email"));
-                    newUser.setRole(Role.REGULAR);
-                    return userRepository.save(newUser);
-                });
+        // User finden oder erstellen (mit Duplikat-Schutz)
+        User user = findOrCreateUser(jwt);
 
         // Rezept finden
         Optional<Recipe> recipeOpt = recipeRepository.findById(recipeId);
@@ -284,16 +318,8 @@ public class FavoriteController {
                 "message", "Aus Favoriten entfernt"
             ));
         } else {
-            // Hinzufügen
-            User user = userRepository.findByOauthId(oauthId)
-                    .orElseGet(() -> {
-                        User newUser = new User();
-                        newUser.setOauthId(oauthId);
-                        newUser.setName(jwt.getClaimAsString("name"));
-                        newUser.setEmail(jwt.getClaimAsString("email"));
-                        newUser.setRole(Role.REGULAR);
-                        return userRepository.save(newUser);
-                    });
+            // Hinzufügen - User finden oder erstellen (mit Duplikat-Schutz)
+            User user = findOrCreateUser(jwt);
 
             Optional<Recipe> recipeOpt = recipeRepository.findById(recipeId);
             if (recipeOpt.isEmpty()) {

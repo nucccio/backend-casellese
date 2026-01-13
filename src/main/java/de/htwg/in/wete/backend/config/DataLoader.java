@@ -93,25 +93,41 @@ public class DataLoader {
 
     /**
      * Fügt einen Benutzer hinzu oder aktualisiert ihn, falls er bereits existiert.
+     * Sucht zuerst nach oauthId (eindeutig), dann nach Email.
      */
     private void upsertUser(UserRepository userRepository, String name, String email, String oauthId, Role role) {
-        Optional<User> existing = userRepository.findByEmail(email);
-        if (existing.isPresent()) {
-            User e = existing.get();
+        // Zuerst nach oauthId suchen (eindeutig)
+        Optional<User> existingByOauth = userRepository.findByOauthId(oauthId);
+        if (existingByOauth.isPresent()) {
+            User e = existingByOauth.get();
+            e.setName(name);
+            e.setEmail(email);
+            e.setRole(role);
+            userRepository.save(e);
+            LOGGER.info("Updated existing {} user with oauthId={}", role, oauthId);
+            return;
+        }
+        
+        // Falls nicht gefunden, nach Email suchen und oauthId aktualisieren
+        Optional<User> existingByEmail = userRepository.findByEmail(email);
+        if (existingByEmail.isPresent()) {
+            User e = existingByEmail.get();
             e.setName(name);
             e.setOauthId(oauthId);
             e.setRole(role);
             userRepository.save(e);
-            LOGGER.info("Updated existing {} user with email={}", role, email);
-        } else {
-            User u = new User();
-            u.setName(name);
-            u.setEmail(email);
-            u.setOauthId(oauthId);
-            u.setRole(role);
-            userRepository.save(u);
-            LOGGER.info("Created new {} user with email={}", role, email);
+            LOGGER.info("Updated existing {} user with email={}, new oauthId={}", role, email, oauthId);
+            return;
         }
+        
+        // Neuen User erstellen
+        User u = new User();
+        u.setName(name);
+        u.setEmail(email);
+        u.setOauthId(oauthId);
+        u.setRole(role);
+        userRepository.save(u);
+        LOGGER.info("Created new {} user with email={}", role, email);
     }
 
     /**

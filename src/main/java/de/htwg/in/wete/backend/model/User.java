@@ -5,8 +5,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * User Entity für die Benutzerverwaltung.
+ * 
+ * Jeder User hat eine eindeutige OAuth-ID (von Auth0) und optional eine Email.
+ * Die Rolle bestimmt die Berechtigungen (ADMIN oder REGULAR).
+ */
 @Entity
-@Table(name = "app_user") // <-- Rename table to avoid reserved keyword
+@Table(name = "app_user", indexes = {
+    @Index(name = "idx_user_oauth_id", columnList = "oauthId", unique = true),
+    @Index(name = "idx_user_email", columnList = "email")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,10 +28,11 @@ public class User {
     private String name;
     
     @NotBlank(message = "OAuth-ID darf nicht leer sein")
+    @Column(unique = true, nullable = false)
     private String oauthId;
 
-    @Enumerated(EnumType.STRING) // <-- Use JPA enum mapping
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.REGULAR;
 
     // Getters and setters
     public Long getId() {
